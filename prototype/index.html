@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Local Html Tuner</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">
+        <path d="M12 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7Z"></path>
+        <path d="M19.4 15a8.1 8.1 0 0 0 .1-1.5 8.1 8.1 0 0 0-.1-1.5l2-1.5-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 4h-4l-.4 2.6A7.6 7.6 0 0 0 7 8.1l-2.4-1-2 3.4 2 1.5a8.1 8.1 0 0 0-.1 1.5 8.1 8.1 0 0 0 .1 1.5l-2 1.5 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6 1.5L10 23h4l.4-2.6a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4-2-1.5Z"></path>
+      </symbol>
+      <symbol id="icon-window" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">
+        <path d="M4 5h16v14H4V5Z"></path>
+        <path d="M4 9h16"></path>
+        <path d="M14 5v14"></path>
+      </symbol>
+      <symbol id="icon-sidebar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">
+        <path d="M4 5h16v14H4V5Z"></path>
+        <path d="M15 5v14"></path>
+        <path d="M7 9h5M7 12h5M7 15h5"></path>
+      </symbol>
+      <symbol id="icon-cursor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">
+        <path d="M6 3l11 10-5 .8 2.6 5.2-2.8 1.3-2.5-5.1-3.3 3V3Z"></path>
+      </symbol>
+      <symbol id="icon-region" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">
+        <path d="M5 5h5M14 5h5M5 5v5M19 5v5M5 14v5M5 19h5M14 19h5M19 14v5"></path>
+        <path d="M9 9h6v6H9V9Z"></path>
+      </symbol>
+      <symbol id="icon-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">
+        <path d="M9 7H5v4"></path>
+        <path d="M5 11c2.2-3 5-4.5 8.4-4.2 3.6.3 6.1 3 6.1 6.2 0 3.5-2.8 6-6.6 6H8"></path>
+      </symbol>
+      <symbol id="icon-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">
+        <path d="M4 12 21 4l-7 17-3-7-7-2Z"></path>
+        <path d="m11 14 4-4"></path>
+      </symbol>
+    </svg>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="#prototype" data-page-target="prototype">
+        <span class="brand-mark"></span>
+        <span>Local Html Tuner</span>
+      </a>
+      <nav class="page-switcher" aria-label="页面切换">
+        <button class="nav-button is-active" type="button" data-page-target="prototype">插件原型</button>
+        <button class="nav-button" type="button" data-page-target="landing">产品介绍</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page prototype-page is-active" id="prototypePage" aria-labelledby="prototypeTitle">
+        <div class="prototype-heading">
+          <div>
+            <p class="micro">LOCAL PREVIEW / EXTENSION WORKBENCH</p>
+            <h1 id="prototypeTitle">在浏览器里圈出局部，让 AI 修改本地 HTML。</h1>
+          </div>
+          <p class="prototype-copy">默认侧边栏承载会话、选择、对比和撤销；浮窗模式保持同一任务上下文。</p>
+        </div>
+
+        <div class="workspace" id="workspace">
+          <section class="browser-surface" aria-label="本地 HTML 预览页面">
+            <div class="browser-chrome">
+              <div class="window-controls" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="address">http://localhost:4173/index.html</div>
+              <button class="ghost-action" type="button" id="refreshPreview">刷新预览</button>
+            </div>
+
+            <div class="preview-stage" id="previewStage">
+              <div class="selector-toast" id="selectorToast">选择模式已关闭</div>
+              <div class="preview-page">
+                <header class="sample-nav" data-selectable="nav.header" data-kind="导航">
+                  <strong>Draft Studio</strong>
+                  <nav>
+                    <a href="#sampleWork">案例</a>
+                    <a href="#samplePricing">价格</a>
+                    <a href="#sampleContact">联系</a>
+                  </nav>
+                </header>
+                <section class="sample-hero" data-selectable="section.hero" data-kind="首屏区域">
+                  <div>
+                    <span class="sample-kicker">HTML PROTOTYPE</span>
+                    <h2>把静态页面改到能给团队演示。</h2>
+                    <p>这个示例页面用于测试插件的点选、框选、对比和撤销体验。</p>
+                    <button class="sample-primary" data-selectable="button.primary" data-kind="主按钮" type="button">
+                      开始调优
+                    </button>
+                  </div>
+                  <aside class="sample-paper" data-selectable="aside.note" data-kind="纸片说明">
+                    <span>NOTE</span>
+                    <p>卡片间距、按钮层级和 hover 交互都可以作为局部任务提交。</p>
+                  </aside>
+                </section>
+                <section class="sample-grid" id="sampleWork" data-selectable="section.card-grid" data-kind="卡片区域">
+                  <article data-selectable="article.card.visual" data-kind="视觉卡片">
+                    <span>VISUAL</span>
+                    <h3>弱化次要按钮</h3>
+                    <p>让用户更清楚地看到主要动作。</p>
+                  </article>
+                  <article data-selectable="article.card.layout" data-kind="布局卡片">
+                    <span>LAYOUT</span>
+                    <h3>拉开内容节奏</h3>
+                    <p>把标题、正文、控件重新分层。</p>
+                  </article>
+                  <article data-selectable="article.card.motion" data-kind="交互卡片">
+                    <span>MOTION</span>
+                    <h3>点击后展开详情</h3>
+                    <p>给原型加入可演示的局部状态。</p>
+                  </article>
+                </section>
+              </div>
+
+              <div class="selection-mask" id="selectionMask" aria-hidden="true"></div>
+              <div class="target-rect" id="targetRect" aria-hidden="true">
+                <span class="target-label" id="targetLabel">button.primary</span>
+              </div>
+              <div class="region-rect" id="regionRect" aria-hidden="true">
+                <span id="regionSize">482 x 260</span>
+              </div>
+              <div class="floating-toolbar" id="floatingToolbar" aria-hidden="true">
+                <button type="button" id="confirmSelection">确认目标</button>
+                <button type="button" id="expandSelection">选父级</button>
+                <button type="button" id="cancelSelection">取消</button>
+              </div>
+            </div>
+          </section>
+
+          <aside class="plugin-panel" id="pluginPanel" aria-label="浏览器插件面板">
+            <div class="panel-head">
+              <div>
+                <h2>Local Html Tuner</h2>
+                <p class="current-project">当前项目：draft-studio / index.html</p>
+              </div>
+              <div class="panel-actions">
+                <button class="icon-button" type="button" id="settingsButton" aria-label="设置" title="设置">
+                  <svg aria-hidden="true"><use href="#icon-settings"></use></svg>
+                </button>
+                <button class="icon-button" type="button" id="panelModeButton" aria-label="切换为浮窗" title="切换为浮窗">
+                  <svg aria-hidden="true"><use href="#icon-window"></use></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="status-strip" aria-label="全局状态">
+              <span class="status is-ok">本地服务</span>
+              <span class="status is-ok">Codex CLI</span>
+              <span class="status is-ok">GPT-5 / High</span>
+            </div>
+
+            <div class="tool-row" role="toolbar" aria-label="选择与版本操作">
+              <button type="button" class="tool-button" id="selectElementButton" aria-label="选择元素" title="选择元素">
+                <svg aria-hidden="true"><use href="#icon-cursor"></use></svg>
+              </button>
+              <button type="button" class="tool-button" id="selectRegionButton" aria-label="框选区域" title="框选区域">
+                <svg aria-hidden="true"><use href="#icon-region"></use></svg>
+              </button>
+              <button type="button" class="tool-button danger" id="undoButton" aria-label="撤销" title="撤销" disabled>
+                <svg aria-hidden="true"><use href="#icon-undo"></use></svg>
+              </button>
+            </div>
+
+            <section class="selection-summary" id="selectionSummary" aria-live="polite">
+              <div>
+                <p class="micro">CURRENT TARGET</p>
+                <strong>还没有选中页面目标</strong>
+              </div>
+              <p>先点选一个元素，或框选一块区域，再提交修改请求。</p>
+            </section>
+
+            <section class="chat-log" id="chatLog" aria-label="AI 会话区" aria-live="polite">
+              <article class="message assistant empty-state">
+                <span class="message-role">Local Agent</span>
+                <p>选择页面目标后，描述你想调整的视觉、布局或交互。</p>
+              </article>
+            </section>
+
+            <section class="composer" aria-label="需求输入区">
+              <label for="requestInput">修改要求</label>
+              <textarea id="requestInput" rows="3">把这个区域的主次层级调清楚，保留当前内容。</textarea>
+              <div class="quick-intents">
+                <button type="button" data-intent="调整间距">调整间距</button>
+                <button type="button" data-intent="弱化视觉">弱化视觉</button>
+                <button type="button" data-intent="强化重点">强化重点</button>
+                <button type="button" data-intent="修改交互">修改交互</button>
+              </div>
+              <p class="composer-error" id="composerError">请先选择一个页面目标。</p>
+              <button class="send-button" type="button" id="sendButton">
+                <svg aria-hidden="true"><use href="#icon-send"></use></svg>
+                <span>发送</span>
+              </button>
+            </section>
+
+            <section class="drawer compare-drawer" id="compareDrawer" aria-label="对比与回档">
+              <div class="drawer-head">
+                <div>
+                  <p class="micro">COMPARE / SNAPSHOT</p>
+                  <h3>前后对比</h3>
+                </div>
+                <button class="ghost-action" type="button" data-close-drawer>关闭</button>
+              </div>
+              <div class="compare-tabs" role="tablist" aria-label="对比模式">
+                <button class="is-active" type="button" data-compare-mode="before">修改前</button>
+                <button type="button" data-compare-mode="after">修改后</button>
+                <button type="button" data-compare-mode="split">左右对比</button>
+              </div>
+              <div class="compare-canvas" id="compareCanvas">
+                <div class="before-shot">before</div>
+                <div class="after-shot">after</div>
+              </div>
+              <div class="snapshot-list">
+                <button type="button" class="snapshot-row is-selected">
+                  <span>调整卡片层级</span>
+                  <small>index.html / styles.css</small>
+                </button>
+                <button type="button" class="snapshot-row">
+                  <span>按钮 hover 反馈</span>
+                  <small>styles.css / app.js</small>
+                </button>
+              </div>
+            </section>
+
+            <section class="drawer settings-drawer" id="settingsDrawer" aria-label="设置">
+              <div class="drawer-head">
+                <div>
+                  <p class="micro">LOCAL SETTINGS</p>
+                  <h3>AI 工具配置</h3>
+                </div>
+                <button class="ghost-action" type="button" data-close-drawer>关闭</button>
+              </div>
+              <div class="settings-section">
+                <label>使用模式</label>
+                <div class="segmented">
+                  <button type="button" class="is-active">本机 CLI</button>
+                  <button type="button">API / BYOK</button>
+                </div>
+              </div>
+              <div class="cli-list" aria-label="本机 CLI 检测结果">
+                <button type="button" class="cli-row is-selected">
+                  <span>Codex CLI</span>
+                  <small>可用 / 已登录 / GPT-5</small>
+                </button>
+                <button type="button" class="cli-row">
+                  <span>Claude Code</span>
+                  <small>可用 / 需要重新测试</small>
+                </button>
+                <button type="button" class="cli-row is-error">
+                  <span>Open Design AMR</span>
+                  <small>PATH 未识别</small>
+                </button>
+              </div>
+              <div class="form-grid">
+                <label>
+                  模型
+                  <select>
+                    <option>GPT-5</option>
+                    <option>GPT-5 mini</option>
+                  </select>
+                </label>
+                <label>
+                  推理强度
+                  <select>
+                    <option>High</option>
+                    <option>Medium</option>
+                  </select>
+                </label>
+              </div>
+              <label class="api-key-row">
+                API Key
+                <input type="password" value="" placeholder="仅保存在本地安全存储" />
+              </label>
+              <p class="security-note">密钥不写入项目、快照或普通日志。本机 CLI 优先复用用户本机登录状态。</p>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page landing-page" id="landingPage" aria-labelledby="landingTitle">
+        <section class="landing-hero">
+          <div class="hero-copy">
+            <p class="micro">Local Html Tuner</p>
+            <h1 id="landingTitle">本地 HTML 局部调优插件</h1>
+            <p>点选页面目标，交给本机 AI 工具修改真实文件。</p>
+            <div class="hero-actions">
+              <button class="primary-cta" type="button" data-page-target="prototype">查看插件原型</button>
+              <a class="secondary-cta" href="#workflow">阅读流程</a>
+            </div>
+          </div>
+          <div class="hero-apparatus" aria-label="插件工作台预览">
+            <div class="apparatus-stage">
+              <div class="apparatus-grid"></div>
+              <div class="apparatus-node is-large">
+                <span>SELECT</span>
+                <strong>section.card-grid</strong>
+              </div>
+              <div class="apparatus-node">
+                <span>PATCH</span>
+                <strong>styles.css</strong>
+              </div>
+              <div class="apparatus-node is-paper">
+                <span>SNAPSHOT</span>
+                <strong>before / after</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="scenario-section" aria-labelledby="scenarioTitle">
+          <h2 id="scenarioTitle">四个高频调优场景</h2>
+          <div class="scenario-grid">
+            <article class="scenario-cell">
+              <span>A</span>
+              <h3>局部视觉调优</h3>
+              <p>点选按钮、标题、卡片或表单，让 AI 只处理目标附近样式。</p>
+            </article>
+            <article class="scenario-cell is-paper">
+              <span>B</span>
+              <h3>区域布局调优</h3>
+              <p>框选一整块布局，携带截图、DOM、尺寸和共同父级上下文。</p>
+            </article>
+            <article class="scenario-cell is-diagram">
+              <span>C</span>
+              <h3>局部交互调优</h3>
+              <p>把卡片展开、hover、点击反馈写进真实 HTML/CSS/JS。</p>
+            </article>
+            <article class="scenario-cell">
+              <span>D</span>
+              <h3>快速回退</h3>
+              <p>每次修改前先创建快照，不满意就撤销或恢复历史版本。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="workflow-section" id="workflow" aria-labelledby="workflowTitle">
+          <h2 id="workflowTitle">从选择到回档的闭环</h2>
+          <div class="workflow-board">
+            <article>
+              <span>绑定</span>
+              <p>连接 companion 服务，选择本地目录或拖入 HTML 文件。</p>
+            </article>
+            <article>
+              <span>选择</span>
+              <p>在 `localhost` 预览页点选元素或框选区域。</p>
+            </article>
+            <article>
+              <span>执行</span>
+              <p>本地服务创建快照，调用已配置的 CLI 或 API 模型。</p>
+            </article>
+            <article>
+              <span>确认</span>
+              <p>刷新预览，查看前后截图，继续微调或撤销。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="anatomy-section" aria-labelledby="anatomyTitle">
+          <div class="anatomy-media">
+            <div class="anatomy-frame">
+              <span class="frame-label">CONTEXT PACKET</span>
+              <pre><code>{
+  "mode": "region",
+  "target": "section.card-grid",
+  "files": ["index.html", "styles.css"],
+  "request": "调整间距和层级"
+}</code></pre>
+            </div>
+          </div>
+          <div class="anatomy-copy">
+            <h2 id="anatomyTitle">浏览器负责看见，本地服务负责修改。</h2>
+            <p>插件不直接写文件。目录管理、快照、CLI 检测、补丁应用和回档都由本地 companion 服务完成。</p>
+            <ul>
+              <li>选区上下文包含 DOM 路径、截图引用、尺寸和计算样式。</li>
+              <li>AI 工具缺失或测试失败时，修改任务不会提交。</li>
+              <li>API Key 仅在用户选择 API / BYOK 模式时由本地保存。</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="safety-section" aria-labelledby="safetyTitle">
+          <h2 id="safetyTitle">安全边界先于自动化</h2>
+          <div class="safety-panel">
+            <p>默认修改范围被限制在绑定项目目录内。普通日志不输出 token、密钥或 `.env` 值。</p>
+            <button class="primary-cta" type="button" data-page-target="prototype">打开工作台</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

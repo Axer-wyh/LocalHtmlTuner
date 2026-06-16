@@ -1,0 +1,18 @@
+{
+  "name": "@local-html-tuner/companion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "dev": "tsx watch src/server.ts",
+    "pretest": "npm run build -w @local-html-tuner/shared",
+    "test": "vitest run src",
+    "pretypecheck": "npm run build -w @local-html-tuner/shared",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@local-html-tuner/shared": "file:../../packages/shared",
+    "fastify": "^5.4.0"
+  }
+}

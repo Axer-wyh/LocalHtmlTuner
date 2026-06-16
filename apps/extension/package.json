@@ -1,0 +1,23 @@
+{
+  "name": "@local-html-tuner/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "pretest": "npm run build -w @local-html-tuner/shared",
+    "test": "vitest run src",
+    "pretypecheck": "npm run build -w @local-html-tuner/shared",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@local-html-tuner/shared": "file:../../packages/shared",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6"
+  }
+}
