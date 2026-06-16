@@ -3,12 +3,12 @@
   "name": "Local Html Tuner",
   "description": "Tune local HTML prototypes from a Chrome side panel.",
   "version": "0.1.0",
-  "permissions": ["activeTab", "sidePanel", "scripting", "storage"],
+  "minimum_chrome_version": "114",
+  "permissions": ["sidePanel"],
   "host_permissions": [
     "http://127.0.0.1:17373/*",
     "http://localhost/*",
-    "http://127.0.0.1/*",
-    "file:///*"
+    "http://127.0.0.1/*"
   ],
   "background": {
     "service_worker": "background.js",
@@ -22,7 +22,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://localhost/*", "http://127.0.0.1/*", "file:///*"],
+      "matches": ["http://localhost/*", "http://127.0.0.1/*"],
       "js": ["contentScript.js"],
       "run_at": "document_idle"
     }

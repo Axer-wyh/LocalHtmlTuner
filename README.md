@@ -1,71 +1,93 @@
 # Local Html Tuner
 
-Local Html Tuner is a Chrome MV3 extension plus a local companion service for tuning local HTML/CSS/JS prototypes from the browser.
+Chrome MV3 extension + local companion service for tuning local HTML/CSS/JS prototypes from a browser side panel.
 
-## Current Slice
+The current version is an MVP vertical slice: the extension UI, target selection scaffold, local API, mock tune result, and undo flow are wired end to end. Real file patching and real Codex CLI execution are not enabled yet.
 
-- Chrome side panel UI with dark Local Html Tuner styling.
-- CLI-first model status for `Codex CLI · GPT-5 / High`.
-- Element and region selection scaffold.
-- Tune request flow through a local companion API.
-- Mock tune result with changed files and snapshot id.
-- Undo endpoint and UI action.
-- API/BYOK mode is visible but intentionally disabled for MVP; clicking it shows `暂仅支持配置CLI方式`.
-- Approved static prototype is preserved in `prototype/`.
+## Repository Layout
 
-## Setup
+```text
+apps/
+  companion/   Local Fastify service on 127.0.0.1:17373
+  extension/   Chrome MV3 extension side panel
+packages/
+  shared/      Shared request, response, and runtime types
+prototype/     Approved static product/UI prototype
+docs/          Product docs and implementation plan
+```
+
+## Requirements
+
+- Node.js 24+
+- npm 11+
+- Chrome 114+
+- Git with SSH access to GitHub if you want to push changes
+
+## Install From GitHub
 
 ```bash
+git clone git@github.com:Axer-wyh/LocalHtmlTuner.git
+cd LocalHtmlTuner
 npm install
 ```
 
-If the global npm cache has permission issues, use a project-local cache:
+If your npm user cache has permission issues:
 
 ```bash
 npm_config_cache=.npm-cache npm install
 ```
 
-## Development
+## Run The Full Local Test Flow
 
-Start the local companion service:
+Use three terminals.
+
+Terminal 1: start the companion service.
 
 ```bash
 npm run dev:companion
 ```
 
-The companion listens on:
+Expected service URL:
 
 ```text
 http://127.0.0.1:17373
 ```
 
-Start the extension side panel dev app:
+Terminal 2: serve the sample prototype page.
 
 ```bash
-npm run dev:extension
+npm run dev:prototype
 ```
 
-Build the loadable MV3 extension:
+Open:
+
+```text
+http://127.0.0.1:4173/
+```
+
+Terminal 3: build the Chrome extension.
 
 ```bash
 npm run build -w apps/extension
 ```
 
-Then load `apps/extension/dist` from `chrome://extensions` with Developer Mode enabled.
+Load the extension in Chrome:
 
-## Prototype
+1. Open `chrome://extensions`.
+2. Enable Developer Mode.
+3. Click `Load unpacked`.
+4. Select `apps/extension/dist`.
+5. Open the extension side panel from Chrome.
 
-The visual prototype is static and can be opened directly:
+Manual checks:
 
-```text
-prototype/index.html
-```
-
-Syntax-check the prototype script:
-
-```bash
-node --check prototype/app.js
-```
+- The panel title is `Local Html Tuner`.
+- Status shows `本地服务`, `Codex CLI`, and `GPT-5 / High`.
+- Clicking `API / BYOK` shows `暂仅支持配置CLI方式`.
+- `发送` is disabled before selecting a target.
+- Click the select-element icon, then `发送`.
+- The chat shows a mock result with `index.html / styles.css`.
+- The undo icon becomes available and restores the mock snapshot state.
 
 ## Verification
 
@@ -73,19 +95,36 @@ node --check prototype/app.js
 npm test
 npm run typecheck
 npm run build
+npm audit
 node --check prototype/app.js
 ```
 
-## GitHub
+## Security Notes
 
-Remote repository:
+- The extension does not request `file:///*` access.
+- The extension does not request unused `activeTab`, `scripting`, or `storage` permissions.
+- The companion service only listens on `127.0.0.1`.
+- Browser CORS is restricted to Chrome extension origins and local dev origins.
+- API/BYOK is UI-only in this MVP; no API key is stored or sent.
+- Real file modification is not enabled in this slice.
+- Do not commit `.env`, tokens, API keys, private keys, or local cache directories.
 
-```text
-https://github.com/Axer-wyh/LocalHtmlTuner.git
-```
+## Current Scope
 
-This local checkout already points `origin` at that repository. Pushing requires either working Git HTTPS transport or GitHub CLI authentication.
+Implemented:
 
-```bash
-git push -u origin main
-```
+- Chrome side panel UI
+- Local companion API
+- Selection scaffold
+- Mock tune result
+- Undo flow
+- API/BYOK disabled toast
+- Static visual prototype
+
+Not implemented yet:
+
+- Real Codex CLI invocation
+- Real HTML/CSS/JS patching
+- Snapshot files on disk
+- Secure local settings storage
+- GitHub PR workflow from the extension UI

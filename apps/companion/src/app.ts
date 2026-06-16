@@ -7,25 +7,45 @@ interface ProviderModeBody {
   mode?: ProviderMode;
 }
 
+const allowedDevOrigins = new Set(["http://127.0.0.1:5173", "http://localhost:5173"]);
+
+export function getAllowedCorsOrigin(origin?: string): string | null {
+  if (!origin) {
+    return null;
+  }
+
+  if (origin.startsWith("chrome-extension://")) {
+    return origin;
+  }
+
+  return allowedDevOrigins.has(origin) ? origin : null;
+}
+
 export function createApp(): FastifyInstance {
   const app = Fastify({
     logger: false
   });
 
-  app.addHook("onSend", async (request, reply, payload) => {
-    reply.header("Access-Control-Allow-Origin", "*");
+  app.addHook("onRequest", async (request, reply) => {
+    const origin = request.headers.origin;
+    const allowedOrigin = getAllowedCorsOrigin(origin);
+
+    reply.header("Vary", "Origin");
     reply.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
     reply.header("Access-Control-Allow-Headers", "Content-Type");
 
-    if (request.method === "OPTIONS") {
-      reply.status(204);
-      return "";
+    if (allowedOrigin) {
+      reply.header("Access-Control-Allow-Origin", allowedOrigin);
     }
 
-    return payload;
+    if (request.method === "OPTIONS" && origin && !allowedOrigin) {
+      return reply.status(403).send({ message: "origin not allowed" });
+    }
   });
 
-  app.options("/*", async () => "");
+  app.options("/*", async (_request, reply) => {
+    return reply.status(204).send();
+  });
 
   app.get("/health", async () => ({
     ok: true,

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { createApp } from "./app";
+import { createApp, getAllowedCorsOrigin } from "./app";
 import { clearTaskStore } from "./taskStore";
 import type { TuneRequest } from "@local-html-tuner/shared";
 
@@ -36,6 +36,28 @@ describe("companion app", () => {
       ok: true,
       service: "local-html-tuner-companion"
     });
+  });
+
+  it("allows only extension and local dev CORS origins", () => {
+    expect(getAllowedCorsOrigin("chrome-extension://abc")).toBe("chrome-extension://abc");
+    expect(getAllowedCorsOrigin("http://127.0.0.1:5173")).toBe("http://127.0.0.1:5173");
+    expect(getAllowedCorsOrigin("http://localhost:5173")).toBe("http://localhost:5173");
+    expect(getAllowedCorsOrigin("https://example.com")).toBeNull();
+  });
+
+  it("rejects browser preflights from arbitrary origins", async () => {
+    const app = createApp();
+    const response = await app.inject({
+      method: "OPTIONS",
+      url: "/tasks/tune",
+      headers: {
+        origin: "https://example.com",
+        "access-control-request-method": "POST"
+      }
+    });
+
+    expect(response.statusCode).toBe(403);
+    expect(response.headers["access-control-allow-origin"]).toBeUndefined();
   });
 
   it("returns default CLI config", async () => {

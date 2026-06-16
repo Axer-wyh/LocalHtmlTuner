@@ -12,7 +12,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "dev:companion": "npm run dev -w apps/companion",
-    "dev:extension": "npm run dev -w apps/extension"
+    "dev:extension": "npm run dev -w apps/extension",
+    "dev:prototype": "vite prototype --host 127.0.0.1 --port 4173"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
