@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npm run build -w @local-html-tuner/shared",
     "build": "vite build",
+    "predev": "npm run build -w @local-html-tuner/shared",
     "dev": "vite --host 127.0.0.1 --port 5173",
     "pretest": "npm run build -w @local-html-tuner/shared",
     "test": "vitest run src",

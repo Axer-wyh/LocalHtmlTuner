@@ -47,6 +47,8 @@ Terminal 1: start the companion service.
 npm run dev:companion
 ```
 
+This command builds the shared workspace package automatically before starting the service.
+
 Expected service URL:
 
 ```text
@@ -70,6 +72,8 @@ Terminal 3: build the Chrome extension.
 ```bash
 npm run build -w apps/extension
 ```
+
+This command also builds the shared workspace package automatically, so a fresh clone does not need a separate shared build step.
 
 Load the extension in Chrome:
 

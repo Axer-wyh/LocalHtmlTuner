@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npm run build -w @local-html-tuner/shared",
     "build": "rm -rf dist && tsc -p tsconfig.json",
+    "predev": "npm run build -w @local-html-tuner/shared",
     "dev": "tsx watch src/server.ts",
     "pretest": "npm run build -w @local-html-tuner/shared",
     "test": "vitest run src",
